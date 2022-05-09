@@ -1,0 +1,24 @@
+services:
+  user:
+    image: userservice:latest
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - "15672:15672"
+
+volumes:
+  postgres-data:
+  driver:
+    name: chat

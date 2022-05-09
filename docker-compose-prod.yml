@@ -1,0 +1,14 @@
+services:
+  user:
+    image: ghcr.io/0xdeadcat/userservice:main
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+  driver:
+    name: local
