@@ -23,17 +23,22 @@ services:
     image: relayservice:latest
     depends_on:
       - rabbitmq
-      - proxy
   frontend:
     image: frontendservice:latest
     depends_on:
       - relay
-      - proxy
+  chat:
+    image: chatservice:latest
+    depends_on:
+      - rabbitmq
   proxy:
     build: proxy
     ports:
       - "80:80"
       - "8080:8080"
+    depends_on:
+      - frontend
+      - relay
     
 
 volumes:

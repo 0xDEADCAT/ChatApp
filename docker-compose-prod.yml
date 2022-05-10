@@ -22,6 +22,10 @@ services:
     depends_on:
       - relay
       - proxy
+  chat:
+    image: ghcr.io/dobja/chatservice:main
+    depends_on:
+      - rabbitmq
   proxy:
     build: proxy
     ports:
