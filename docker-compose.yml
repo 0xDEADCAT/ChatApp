@@ -15,10 +15,28 @@ services:
       - postgres-data:/var/lib/postgresql/data
   rabbitmq:
     image: rabbitmq:management-alpine
+    hostname: rabbitmq
     ports:
+      - "5672:5672"
       - "15672:15672"
+  relay:
+    image: relayservice:latest
+    depends_on:
+      - rabbitmq
+      - proxy
+  frontend:
+    image: frontendservice:latest
+    depends_on:
+      - relay
+      - proxy
+  proxy:
+    build: proxy
+    ports:
+      - "80:80"
+      - "8080:8080"
+    
 
 volumes:
   postgres-data:
   driver:
-    name: chat
+    name: local

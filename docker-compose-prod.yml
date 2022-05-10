@@ -5,8 +5,29 @@ services:
       - postgres
   postgres:
     image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    hostname: rabbitmq
+  relay:
+    image: ghcr.io/0xdeadcat/relayservice:main
+    depends_on:
+      - rabbitmq
+      - proxy
+  frontend:
+    image: ghcr.io/dobja/frontendservice:main
+    depends_on:
+      - relay
+      - proxy
+  proxy:
+    build: proxy
+    ports:
+      - "80:80"
+      - "8080:8080"
+    
 
 volumes:
   postgres-data:
