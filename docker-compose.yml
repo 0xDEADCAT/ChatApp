@@ -1,10 +1,4 @@
 services:
-  user:
-    image: userservice:latest
-    ports:
-      - "8000:80"
-    depends_on:
-      - postgres
   postgres:
     image: postgres
     ports:
@@ -24,20 +18,6 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
-  relay:
-    image: relayservice:latest
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-  frontend:
-    image: frontendservice:latest
-    depends_on:
-      - proxy
-  chat:
-    image: chatservice:latest
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
   proxy:
     build: proxy
     ports:
@@ -47,6 +27,26 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+  frontend:
+    image: ghcr.io/dobja/chatfrontend:main
+    depends_on:
+      - proxy
+  relay:
+    image: ghcr.io/0xdeadcat/relayservice:main
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+  chat:
+    image: ghcr.io/dobja/chatservice:main
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+  user:
+    image: ghcr.io/0xdeadcat/userservice:main
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
     
 
 volumes:
