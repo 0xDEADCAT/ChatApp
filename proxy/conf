@@ -1,6 +1,6 @@
 server {
   listen 80;
-  server_name localhost;
+  server_name frontend.test;
 
   location / {
     proxy_set_header   Host            $http_host;
@@ -14,34 +14,50 @@ server {
   }
 }
 
-server {
-  listen 8080;
-  server_name localhost;
-
-  location / {
-    proxy_set_header   Host            $http_host;
-    proxy_set_header   Upgrade         $http_upgrade;
-    proxy_set_header   Connection      "upgrade";
-    proxy_set_header   X-Real-IP       $remote_addr;
-    proxy_set_header   X-NginX-Proxy   true;
-    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_redirect     off;
-    proxy_pass         http://relay;
-  }
+map $http_connection $connection_upgrade {
+  "~*Upgrade" $http_connection;
+  default keep-alive;
 }
 
 server {
-  listen 8081;
-  server_name localhost;
+  listen 80;
+  server_name relay.test;
+
+  # Configure the SignalR Endpoint
+  location / {
+    # App server url
+    proxy_pass http://relay;
+
+    # Configuration for WebSockets
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_cache off;
+    # WebSockets were implemented after http/1.0
+    proxy_http_version 1.1;
+
+    # Configuration for ServerSentEvents
+    proxy_buffering off;
+
+    # Configuration for LongPolling or if your KeepAliveInterval is longer than 60 seconds
+    proxy_read_timeout 100s;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+server {
+  listen 80;
+  server_name user.test;
 
   location / {
-    proxy_set_header   Host            $http_host;
-    proxy_set_header   Upgrade         $http_upgrade;
-    proxy_set_header   Connection      "upgrade";
-    proxy_set_header   X-Real-IP       $remote_addr;
-    proxy_set_header   X-NginX-Proxy   true;
-    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_redirect     off;
     proxy_pass         http://user;
+    proxy_http_version 1.1;
+    proxy_set_header   Upgrade $http_upgrade;
+    proxy_set_header   Connection keep-alive;
+    proxy_set_header   Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Proto $scheme;
   }
 }
