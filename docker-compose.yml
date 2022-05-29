@@ -28,21 +28,21 @@ services:
       rabbitmq:
         condition: service_healthy
   frontend:
-    image: ghcr.io/dobja/chatfrontend:main
+    build: ../ChatFrontend
     depends_on:
       - proxy
   relay:
-    image: ghcr.io/0xdeadcat/relayservice:main
+    build: ../RelayService
     depends_on:
       rabbitmq:
         condition: service_healthy
   chat:
-    image: ghcr.io/dobja/chatservice:main
+    build: ../ChatService
     depends_on:
       rabbitmq:
         condition: service_healthy
   user:
-    image: ghcr.io/0xdeadcat/userservice:main
+    build: ../UserService
     ports:
       - "8000:80"
     depends_on:
