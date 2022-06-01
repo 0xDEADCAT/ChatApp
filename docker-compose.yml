@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:14.3
     ports:
       - "5432:5432"
     environment:
@@ -22,7 +22,7 @@ services:
       retries: 3
 
   mongo:
-    image: mongo:latest
+    image: mongo:5.0.8
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -35,7 +35,7 @@ services:
       start_period: 40s
 
   mongo-express:
-    image: mongo-express:latest
+    image: mongo-express:1.0.0-alpha
     restart: always
     ports:
       - 8081:8081
