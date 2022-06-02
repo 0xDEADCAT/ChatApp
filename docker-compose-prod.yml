@@ -30,6 +30,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    volumes:
+      - mongo-data:/data/db
 
   mongo-express:
     image: mongo-express:1.0.0-alpha
@@ -50,18 +52,18 @@ services:
         condition: service_healthy
 
   frontend:
-    image: ghcr.io/dobja/chatfrontend:v1.0.0
+    image: ghcr.io/dobja/chatfrontend:v2.0.0
     depends_on:
       - proxy
 
   relay:
-    image: ghcr.io/0xdeadcat/relayservice:v1.0.0
+    image: ghcr.io/0xdeadcat/relayservice:v2.0.1
     depends_on:
       rabbitmq:
         condition: service_healthy
 
   chat:
-    image: ghcr.io/dobja/chatservice:v1.0.0
+    image: ghcr.io/dobja/chatservice:v2.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -75,5 +77,6 @@ services:
     
 volumes:
   postgres-data:
-  driver:
-    name: local
+    driver: local
+  mongo-data:
+    driver: local
