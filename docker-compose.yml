@@ -33,6 +33,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    volumes:
+      - mongo-data:/data/db
 
   mongo-express:
     image: mongo-express:1.0.0-alpha
@@ -78,5 +80,6 @@ services:
     
 volumes:
   postgres-data:
-  driver:
-    name: local
+    driver: local
+  mongo-data:
+    driver: local
