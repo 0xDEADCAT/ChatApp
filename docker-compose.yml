@@ -47,23 +47,31 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
   proxy:
-    build: proxy
+    image: nginx:1.21.6-alpine
+    volumes:
+      - ./proxy:/etc/nginx/templates
     ports:
       - "80:80"
     depends_on:
       rabbitmq:
         condition: service_healthy
+    env_file:
+      - proxy.env
 
   frontend:
     build: ../ChatFrontend
     depends_on:
       - proxy
+    env_file:
+      - common.env
 
   relay:
     build: ../RelayService
     depends_on:
       rabbitmq:
         condition: service_healthy
+    env_file:
+      - common.env
 
   chat:
     build: ../ChatService
@@ -72,11 +80,17 @@ services:
         condition: service_healthy
       mongo:
         condition: service_healthy
+    env_file:
+      - common.env
+      - chat.env
 
   user:
     build: ../UserService
     depends_on:
       - postgres
+    env_file:
+      - common.env
+      - user.env
     
 volumes:
   postgres-data:

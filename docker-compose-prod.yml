@@ -44,12 +44,16 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
 
   proxy:
-    build: proxy
+    image: nginx:1.21.6-alpine
+    volumes:
+      - ./proxy:/etc/nginx/templates
     ports:
       - "80:80"
     depends_on:
       rabbitmq:
         condition: service_healthy
+    env_file:
+      - proxy.env
 
   frontend:
     image: ghcr.io/dobja/chatfrontend:v2.0.0

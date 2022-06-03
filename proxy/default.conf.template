@@ -1,6 +1,6 @@
 server {
-  listen 80;
-  server_name frontend.test;
+  listen ${NGINX_FRONTEND_PORT};
+  server_name ${NGINX_FRONTEND_HOST};
 
   location / {
     proxy_set_header   Host            $http_host;
@@ -20,8 +20,8 @@ map $http_connection $connection_upgrade {
 }
 
 server {
-  listen 80;
-  server_name relay.test;
+  listen ${NGINX_RELAY_PORT};
+  server_name ${NGINX_RELAY_HOST};
 
   # Configure the SignalR Endpoint
   location / {
@@ -47,8 +47,8 @@ server {
   }
 }
 server {
-  listen 80;
-  server_name user.test;
+  listen ${NGINX_USER_PORT};
+  server_name ${NGINX_USER_HOST};
 
   location / {
     proxy_pass         http://user;
@@ -62,8 +62,8 @@ server {
   }
 }
 server {
-  listen 80;
-  server_name chat.test;
+  listen ${NGINX_CHAT_PORT};
+  server_name ${NGINX_CHAT_HOST};
 
   location / {
     proxy_pass         http://chat;
