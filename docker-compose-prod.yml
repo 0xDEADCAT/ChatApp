@@ -9,34 +9,59 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+    networks:
+      - internal_net
 
   proxy:
     image: nginx:1.21.6-alpine
     volumes:
       - ./proxy:/etc/nginx/templates
     ports:
-      - "80:80"
+      - "17532:80"
     env_file:
       - proxy.env
+    networks:
+      - internal_net
 
   frontend:
     image: ghcr.io/dobja/chatfrontend:v2.1.0
     env_file:
       - common.env
+    networks:
+      - internal_net
 
   relay:
     image: ghcr.io/0xdeadcat/relayservice:v2.1.0
     env_file:
       - common.env
+    networks:
+      - internal_net
 
   chat:
     image: ghcr.io/dobja/chatservice:v2.1.0
     env_file:
       - common.env
       - chat.env
+    networks:
+      - internal_net
+      - mongo_net
 
   user:
     image: ghcr.io/0xdeadcat/userservice:v2.0.0
     env_file:
       - common.env
       - user.env
+    networks:
+      - internal_net
+      - postgres_net
+
+networks:
+        mongo_net:
+                external: true
+                name: admin-mongodb_default
+        postgres_net:
+                external: true
+                name: admin-postgres_default
+        internal_net:
+                name: rsww_175327_internal
+                driver: overlay
