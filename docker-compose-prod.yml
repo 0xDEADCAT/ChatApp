@@ -56,29 +56,39 @@ services:
       - proxy.env
 
   frontend:
-    image: ghcr.io/dobja/chatfrontend:v2.0.0
+    image: ghcr.io/dobja/chatfrontend:v2.1.0
     depends_on:
       - proxy
+    env_file:
+      - common.env
 
   relay:
-    image: ghcr.io/0xdeadcat/relayservice:v2.0.1
+    image: ghcr.io/0xdeadcat/relayservice:v2.1.0
     depends_on:
       rabbitmq:
         condition: service_healthy
+    env_file:
+      - common.env
 
   chat:
-    image: ghcr.io/dobja/chatservice:v2.0.0
+    image: ghcr.io/dobja/chatservice:v2.1.0
     depends_on:
       rabbitmq:
         condition: service_healthy
       mongo:
         condition: service_healthy
+    env_file:
+      - common.env
+      - chat.env
 
   user:
-    image: ghcr.io/0xdeadcat/userservice:v1.0.0
+    image: ghcr.io/0xdeadcat/userservice:v2.0.0
     depends_on:
       - postgres
-    
+    env_file:
+      - common.env
+      - user.env
+
 volumes:
   postgres-data:
     driver: local
